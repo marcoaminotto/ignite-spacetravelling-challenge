@@ -28,11 +28,11 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home({ postsPagination }: HomeProps) {
+export default function Home({ postsPagination }: HomeProps): JSX.Element {
   const [posts, setPosts] = useState<Post[]>(postsPagination.results);
   const [nextPage, setNextPage] = useState(postsPagination.next_page);
 
-  async function fetchData(link: string) {
+  async function fetchData(link: string): Promise<void> {
     await fetch(link)
       .then(response => response.json())
       .then(data => {
