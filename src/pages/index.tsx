@@ -41,7 +41,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
             month: 'short',
             year: 'numeric',
           })
-          .replace(/(de)|\./g, '')
+          .replace(/( de)|\./g, '')
       ),
     })),
   });
@@ -60,7 +60,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
                   month: 'short',
                   year: 'numeric',
                 })
-                .replace(/(de)|\./g, '')
+                .replace(/( de)|\./g, '')
             ),
           };
         });
