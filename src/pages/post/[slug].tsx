@@ -61,7 +61,7 @@ export default function Post({ post }: PostProps): JSX.Element {
           month: 'short',
           year: 'numeric',
         })
-        .replace(/(de)|\./g, '')
+        .replace(/( de)|\./g, '')
     );
   }, [post]);
 
