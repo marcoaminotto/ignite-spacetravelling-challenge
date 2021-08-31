@@ -8,6 +8,7 @@ import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+import Header from '../components/Header';
 
 interface Post {
   uid?: string;
@@ -29,45 +30,55 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
-  const [posts, setPosts] = useState<Post[]>(postsPagination.results);
-  const [nextPage, setNextPage] = useState(postsPagination.next_page);
+  const [posts, setPosts] = useState<PostPagination>({
+    ...postsPagination,
+    results: postsPagination.results.map(post => ({
+      ...post,
+      first_publication_date: String(
+        new Date(post.first_publication_date)
+          .toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })
+          .replace(/(de)|\./g, '')
+      ),
+    })),
+  });
 
-  async function fetchData(link: string): Promise<void> {
-    await fetch(link)
+  async function fetchData(): Promise<void> {
+    await fetch(posts.next_page)
       .then(response => response.json())
       .then(data => {
         const formatedDatePosts = data.results.map(post => {
           return {
-            uid: post.uid,
-            first_publication_date: new Date(
-              post.first_publication_date
-            ).toLocaleDateString('pt-BR', {
-              day: '2-digit',
-              month: 'long',
-              year: 'numeric',
-            }),
-            data: {
-              title: post.data.title,
-              subtitle: post.data.subtitle,
-              author: post.data.author,
-            },
+            ...post,
+            first_publication_date: String(
+              new Date(post.first_publication_date)
+                .toLocaleDateString('pt-BR', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: 'numeric',
+                })
+                .replace(/(de)|\./g, '')
+            ),
           };
         });
 
-        const updatedPosts = [...posts, ...formatedDatePosts];
+        const updatedPosts = {
+          results: [...posts.results, ...formatedDatePosts],
+          next_page: data.next_page,
+        };
         setPosts(updatedPosts);
-        setNextPage(data.next_page);
       });
   }
 
   return (
     <div className={commonStyles.container}>
-      <nav className={styles.nav}>
-        <img src="/images/logo.svg" alt="logo" />
-      </nav>
+      <Header />
       <main className={styles.posts}>
         <div>
-          {posts.map(post => (
+          {posts.results.map(post => (
             <Link key={post.uid} href={`/post/${post.uid}`}>
               <a>
                 <strong>{post.data.title}</strong>
@@ -86,8 +97,8 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
             </Link>
           ))}
         </div>
-        {nextPage && (
-          <button type="button" onClick={() => fetchData(nextPage)}>
+        {posts.next_page && (
+          <button type="button" onClick={() => fetchData()}>
             Carregar mais posts
           </button>
         )}
@@ -106,32 +117,14 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   );
 
-  const results = postsResponse.results.map(post => {
-    return {
-      uid: post.uid,
-      first_publication_date: new Date(
-        post.first_publication_date
-      ).toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      }),
-      data: {
-        title: post.data.title,
-        subtitle: post.data.subtitle,
-        author: post.data.author,
-      },
-    };
-  });
-
-  const nextPage = postsResponse.next_page;
+  const postsPagination = {
+    next_page: postsResponse.next_page,
+    results: postsResponse.results,
+  };
 
   return {
     props: {
-      postsPagination: {
-        next_page: nextPage,
-        results,
-      },
+      postsPagination,
     },
   };
 };
