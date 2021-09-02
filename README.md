@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/marcoaminotto/ignite-spacetravelling-challenge/blob/main/src/images/logo.svg" alt="Image of the ignite-spacetravelling-challenge application" width="300px">
+  <img src="https://github.com/marcoaminotto/ignite-spacetravelling-challenge/blob/main/public/images/logo.svg" alt="Image of the ignite-spacetravelling-challenge application" width="300px">
 </p>
 
 <p align="center">
