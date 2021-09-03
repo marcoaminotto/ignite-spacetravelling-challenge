@@ -1,16 +1,16 @@
+import { useEffect, useMemo } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
-import Head from 'next/head';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
+
 import Prismic from '@prismicio/client';
 import { RichText } from 'prismic-dom';
 import { FaCalendar, FaUser, FaClock } from 'react-icons/fa';
 
-import { useMemo } from 'react';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
 
-// import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
 interface Post {
@@ -33,25 +33,24 @@ interface Post {
 interface PostProps {
   post: Post;
 }
-// const post: Post = {
-//   first_publication_date: new Date(
-//     response.first_publication_date
-//   ).toLocaleDateString('pt-BR', {
-//     day: '2-digit',
-//     month: 'long',
-//     year: 'numeric',
-//   }),
-//   data: {
-//     title: response.data.title,
-//     banner: {
-//       url: response.data.banner.url,
-//     },
-//     author: response.data.author,
-//     content: response.data.content,
-//   },
-// };
+
 export default function Post({ post }: PostProps): JSX.Element {
   const router = useRouter();
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    const anchor = document.getElementById('inject-comments-for-uterances');
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.setAttribute('async', 'true');
+    script.setAttribute(
+      'repo',
+      'marcoaminotto/ignite-spacetravelling-challenge'
+    );
+    script.setAttribute('issue-term', 'pathname');
+    script.setAttribute('theme', 'photon-dark');
+    anchor.appendChild(script);
+  }, []);
 
   const publicationDate = useMemo(() => {
     return String(
@@ -135,17 +134,7 @@ export default function Post({ post }: PostProps): JSX.Element {
           </div>
         </article>
       </main>
-
-      {/* <main className={styles.container}>
-        <article className={styles.post}>
-          /<h1>{post.title}</h1>
-          <time>{post.updatedAt}</time>
-          <div
-            className={styles.postContent}
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
-        </article>
-      </main> */}
+      <div id="inject-comments-for-uterances" />
     </>
   );
 }
