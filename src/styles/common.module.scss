@@ -4,3 +4,21 @@
   margin: 0 auto;
   padding: 0 2rem;
 }
+
+.exit-button {
+  max-width: 720px;
+  margin: 5rem auto 5rem;
+  height: 3.625rem;
+  border-radius: 0.25rem;
+  color: var(--background);
+  background: var(--heading);
+  font-weight: 600;
+
+  a {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
