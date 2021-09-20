@@ -76,6 +76,34 @@
   }
 }
 
+.footer {
+  max-width: 720px;
+  margin: 3.75rem auto 0rem;
+  border-top: 1px solid rgba(215, 215, 215, 0.1);
+  padding-top: 4rem;
+  margin-bottom: 4rem;
+
+  .next-prev {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5rem;
+
+    div + div {
+      text-align: right;
+    }
+
+    span {
+      display: block;
+      font-size: 1.125rem;
+      & + span {
+        color: var(--highlight);
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
 .utterances {
   max-width: 720px;
 }

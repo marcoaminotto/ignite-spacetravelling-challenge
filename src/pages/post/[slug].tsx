@@ -16,6 +16,7 @@ import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
 interface Post {
+  uid: string;
   first_publication_date: string | null;
   data: {
     title: string;
@@ -34,10 +35,17 @@ interface Post {
 
 interface PostProps {
   post: Post;
+  nextPost: Post | null;
+  prevPost: Post | null;
   preview: boolean;
 }
 
-export default function Post({ post, preview }: PostProps): JSX.Element {
+export default function Post({
+  post,
+  nextPost,
+  prevPost,
+  preview,
+}: PostProps): JSX.Element {
   const router = useRouter();
 
   useEffect(() => {
@@ -136,6 +144,31 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
             })}
           </div>
         </article>
+      </main>
+      <footer className={styles.footer}>
+        <div className={styles['next-prev']}>
+          <div>
+            {prevPost && (
+              <Link href={`/post/${prevPost.uid}`}>
+                <a>
+                  <span>{prevPost.data.title}</span>
+                  <span>Post anterior</span>
+                </a>
+              </Link>
+            )}
+          </div>
+          <div>
+            {nextPost && (
+              <Link href={`/post/${nextPost.uid}`}>
+                <a>
+                  <span>{nextPost.data.title}</span>
+                  <span>Próximo post</span>
+                </a>
+              </Link>
+            )}
+          </div>
+        </div>
+
         <div id="inject-comments-for-uterances" />
         {preview && (
           <aside className={commonStyles['exit-button']}>
@@ -144,7 +177,7 @@ export default function Post({ post, preview }: PostProps): JSX.Element {
             </Link>
           </aside>
         )}
-      </main>
+      </footer>
     </>
   );
 }
@@ -179,9 +212,28 @@ export const getStaticProps: GetStaticProps = async ({
     ref: previewData?.ref ?? null,
   });
 
+  const nextPost = await prismic.query(
+    [Prismic.predicates.at('document.type', 'posts')],
+    {
+      pageSize: 1,
+      orderings: '[document.first_publication_date]',
+      after: response.id,
+    }
+  );
+  const prevPost = await prismic.query(
+    [Prismic.predicates.at('document.type', 'posts')],
+    {
+      pageSize: 1,
+      orderings: '[document.first_publication_date desc]',
+      after: response.id,
+    }
+  );
+
   return {
     props: {
       preview,
+      nextPost: nextPost.results[0] ?? null,
+      prevPost: prevPost.results[0] ?? null,
       post: response,
     },
     revalidate: 60 * 60,
