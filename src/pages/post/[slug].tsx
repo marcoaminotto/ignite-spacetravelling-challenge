@@ -1,6 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -18,6 +20,7 @@ import styles from './post.module.scss';
 interface Post {
   uid: string;
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -97,6 +100,14 @@ export default function Post({
     return time === 0 ? 1 : time;
   }, [post, router.isFallback]);
 
+  const isEditedPost = useMemo(() => {
+    if (router.isFallback) {
+      return false;
+    }
+
+    return post.last_publication_date !== post.first_publication_date;
+  }, [post, router.isFallback]);
+
   if (router.isFallback) {
     return <div>Carregando...</div>;
   }
@@ -129,6 +140,28 @@ export default function Post({
             </span>
           </div>
           <div />
+          {isEditedPost && (
+            <div className={styles.postEdited}>
+              <span>
+                * editado em{' '}
+                <time>
+                  {format(new Date(post.last_publication_date), 'dd MMM yyyy', {
+                    locale: ptBR,
+                  })}
+                </time>
+                , às{' '}
+                <time>
+                  {format(
+                    new Date(post.last_publication_date),
+                    `${'HH'}:${'mm'}`,
+                    {
+                      locale: ptBR,
+                    }
+                  )}
+                </time>
+              </span>
+            </div>
+          )}
           <div className={styles.content}>
             {post.data.content.map(postContent => {
               return (
