@@ -17,7 +17,7 @@
 
 ## 📖 About
 
-SpaceTravelling is a simple blog for publishing posts about IT. This project was the fifth module app from the [Ignite Bootcamp](https://rocketseat.com.br/ignite).
+SpaceTravelling is a simple blog for publishing posts about IT by using Prismic CMS. This project was the fifth module app from the [Ignite Bootcamp](https://rocketseat.com.br/ignite).
 
 ## 📐 Layout
 
